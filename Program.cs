@@ -6,7 +6,7 @@
         {
             bool playAgain = true;
             int totalpoints = 0;
-            
+
             while (playAgain)
             {
                 Random rnd = new Random();
@@ -18,11 +18,15 @@
                         slots[i, j] = rnd.Next(0, 10);
                     }
                 }
-                
-                Console.WriteLine("   " + slots[0, 0] + " " + slots[0, 1] + " " + slots[0, 2]);
-                Console.WriteLine("   " + slots[1, 0] + " " + slots[1, 1] + " " + slots[1, 2]);
-                Console.WriteLine("   " + slots[2, 0] + " " + slots[2, 1] + " " + slots[2, 2]);
-                
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine("");
+                    for (int j = 0; j < 3; j++)
+                    {
+                        Console.Write("   " + slots[i, j]);
+                    }
+                }
+
                 if (slots[0, 0] == slots[0, 1] && slots[0, 1] == slots[0, 2])
                 {
                     Console.WriteLine("You won 20 points!");
@@ -55,13 +59,13 @@
                 }
                 else
                 {
-                    Console.WriteLine("You lost!");
+                    Console.WriteLine("\nYou lost!");
                 }
 
                 Console.WriteLine($"Your total points are {totalpoints}");
                 Console.WriteLine("Do you want to play again? (y/n)");
                 string input = Console.ReadLine();
-                
+
                 if (input.ToLower() != "y")
                 {
                     playAgain = false;
