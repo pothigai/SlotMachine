@@ -1,4 +1,6 @@
-﻿namespace SlotMachine
+﻿using System.Reflection.Metadata.Ecma335;
+
+namespace SlotMachine
 {
     internal class Program
     {
@@ -8,22 +10,28 @@
             const int horPoint = 20;
             const int diagPoint = 30;
             const int jackpot = 100;
+            const int minBuyin = 500;
+            const int matrixSize = 3;
+            const int maxNumber = 10;
+            const int playCost = 50;
 
             //Ask the user for a min buy in of 500 points
-            Console.WriteLine("Please enter your buy in amount, the minimum is 500 points: ");
-            int totalPoints = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine($"Please enter your buy in amount, the minimum is {minBuyin} points: ");
+            string playerInput = Console.ReadLine();
+            int totalPoints;
 
-            while (totalPoints < 500)
+            while (!Int32.TryParse(playerInput, out totalPoints) || totalPoints < minBuyin)
             {
-                Console.WriteLine("The entered amount does not meet the minimum buy in amount, please enter an amount of aleast 500:");
-                totalPoints = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine($"The entered amount either does not meet the minimum buy in amount or is not a valid input, please enter a valid amount of aleast {minBuyin}:");
+                //totalPoints = Convert.ToInt32(Console.ReadLine());
+                playerInput = Console.ReadLine();
             }
 
             string playAgain = "y";
 
             while (playAgain == "y")
             {
-                Console.Clear();
+                //Console.Clear();
 
 
                 //Checking if user has enough points to play
@@ -49,47 +57,49 @@
                     }
                 }
 
-                totalPoints -= 50;
+                totalPoints -= playCost;
                 
                 //Generate the random 3x3 matrix for the slot machine
                 Random rnd = new Random();
 
-                int[,] slots = new int[3, 3];
+                int[,] slots = new int[matrixSize, matrixSize];
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < matrixSize; i++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    for (int j = 0; j < matrixSize; j++)
                     {
-                        slots[i, j] = rnd.Next(0, 10);
+                        slots[i, j] = rnd.Next(maxNumber);
                     }
                 }
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < matrixSize; i++)
                 {
                     Console.WriteLine("");
 
-                    for (int j = 0; j < 3; j++)
+                    for (int j = 0; j < matrixSize; j++)
                     {
                         Console.Write("   " + slots[i, j]);
                     }
                 }
 
-                //Check win conditions for rows and diagonals
-                if (slots[0, 0] == slots[0, 1] && slots[0, 1] == slots[0, 2])
+                for (int i = 0; i < matrixSize; i ++)
                 {
-                    Console.WriteLine($"You won {horPoint} points!");
-                    totalPoints = totalPoints + horPoint;
+                    if (slots[i, 0] == slots[i, 1] && slots[i, 1] == slots[i, 2])
+                    {
+                        Console.WriteLine($"You won {horPoint} points!");
+                        totalPoints = totalPoints + horPoint;
+                    }
                 }
-                if (slots[1, 0] == slots[1, 1] && slots[1, 1] == slots[1, 2])
-                {
-                    Console.WriteLine($"You won {horPoint} points!");
-                    totalPoints = totalPoints + horPoint;
-                }
-                if (slots[2, 0] == slots[2, 1] && slots[2, 1] == slots[2, 2])
-                {
-                    Console.WriteLine($"You won {horPoint} points!");
-                    totalPoints = totalPoints + horPoint;
-                }
+
+                //for (int i = 0; i < matrixSize; i++)
+                //{
+                //    if (slots[i, i] == slots[0, 0] || slots[i, matrixSize - 1 - i] == slots[0, matrixSize - 1])
+                //    {
+                //        Console.WriteLine($"You won {diagPoint} points!");
+                //        totalPoints = totalPoints + diagPoint;  
+                //    }
+                //}
+
                 if (slots[0, 0] == slots[1, 1] && slots[1, 1] == slots[2, 2])
                 {
                     Console.WriteLine($"You won {diagPoint} points!");
