@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            // Initialize points for each category
+            //Initialize constants
             const int HORPOINT = 20;
             const int DIAGPOINT = 30;
             const int JACKPOT = 100;
@@ -14,10 +14,6 @@
             const int PLAYCOST = 50;
             const string YES = "y";
             const string NO = "n";
-            const string WINROW = "r";
-            const string WINDIAG = "d";
-            const string WINJACKPOT = "j";
-            const string NOWIN = "l";
 
             //Ask the user for a min buy in of 500 points
             Console.WriteLine($"Please enter your buy in amount, the minimum is {MINBUYIN} points: ");
@@ -27,7 +23,6 @@
             while (!Int32.TryParse(playerInput, out totalPoints) || totalPoints < MINBUYIN)
             {
                 Console.WriteLine($"The entered amount either does not meet the minimum buy in amount or is not a valid input, please enter a valid amount of aleast {MINBUYIN}:");
-                //totalPoints = Convert.ToInt32(Console.ReadLine());
                 playerInput = Console.ReadLine();
             }
 
@@ -35,8 +30,7 @@
 
             while (playAgain == YES)
             {
-                //Console.Clear();
-
+                Console.Clear();
 
                 //Checking if user has enough points to play
                 if (totalPoints <= 0)
@@ -76,6 +70,7 @@
                     }
                 }
 
+                //Print the matrix to display to the user
                 for (int i = 0; i < MATRIXSIZE; i++)
                 {
                     Console.WriteLine("");
@@ -86,70 +81,75 @@
                     }
                 }
 
-                string winFlag = WINJACKPOT;
-                int diagonal1 = slots[0, 0];
-                int diagonal2 = slots[0, 2];
+                Console.WriteLine("");
 
-                for (int i = 0; i < MATRIXSIZE; i++)
-                {
-                    for (int j = 0; j < MATRIXSIZE; j++)
-                    {
-                        if (slots[i, j] != diagonal1)
-                        {
-                            winFlag = NOWIN;
-                            break;
-                        }
-                    }
-                    if (winFlag == NOWIN)
-                    {
-                        break;
-                    }
-                }
-
-                if (winFlag == WINJACKPOT)
-                {
-                    Console.WriteLine($"You won the JACKPOT of a {JACKPOT} points!");
-                    totalPoints = totalPoints + JACKPOT;
-                }
-
+                bool rowMatch = false;
+                bool diagonalMatch = false;
+                bool allValuesMatch = true;
+                //Check rows for a match in values
                 for (int i = 0; i < MATRIXSIZE; i++)
                 {
                     if (slots[i, 0] == slots[i, 1] && slots[i, 1] == slots[i, 2])
                     {
-                        //Console.WriteLine($"You won {HORPOINT} points!");
-                        winFlag = WINROW;
+                        Console.WriteLine($"You won {HORPOINT} points, all values in row {i + 1} match!");
                         totalPoints = totalPoints + HORPOINT;
+                        rowMatch = true;
                     }
                 }
 
-                if (winFlag == WINROW)
-                {
-                    Console.WriteLine($"You won {HORPOINT} points!");
-                }
-
+                bool diagonal1 = true;
+                bool diagonal2 = true;
+                //Check the diagonals for a match
                 for (int i = 1; i < MATRIXSIZE; i++)
                 {
-                    if (slots[i, i] != diagonal1 || slots[i, MATRIXSIZE - 1 - i] != diagonal2)
+                    if (slots[0, 0] != slots[i, i])
                     {
-                        winFlag = NOWIN;
-                        break;
+                        diagonal1 = false;
                     }
-                    else
+                    if (slots[0, 2] != slots[i, 2 - i])
                     {
-                        //Console.WriteLine($"You won {DIAGPOINT} points!");
-                        winFlag = WINDIAG;
-                        totalPoints = totalPoints + DIAGPOINT;
+                        diagonal2 = false;
+                    }
+                }
+
+                if (diagonal1)
+                {
+                    Console.WriteLine($"You won {DIAGPOINT} points, all values in first diagonal match!");
+                    totalPoints += DIAGPOINT;
+                    diagonalMatch = true;
+                }
+                if (diagonal2)
+                {
+                    Console.WriteLine($"You won {DIAGPOINT} points, all values in second diagonal match!");
+                    totalPoints += DIAGPOINT;
+                    diagonalMatch = true;
+                }
+
+                int firstValue = slots[0, 0];
+                //Check if all 9 values are a match
+                for (int i = 0; i < MATRIXSIZE; i++)
+                {
+                    for (int j = 0; j < MATRIXSIZE; j++)
+                    {
+                        if (slots[i, j] != firstValue)
+                        {
+                            allValuesMatch = false;
+                            break;
+                        }
+                    }
+                    if (!allValuesMatch)
+                    {
                         break;
                     }
                 }
 
-                if (winFlag == WINDIAG)
+                if (allValuesMatch)
                 {
-                    Console.WriteLine($"You won {DIAGPOINT} points!");
+                    Console.WriteLine($"You won {JACKPOT} points, all values in the slot match!");
                 }
-                else
+                if (!rowMatch && !diagonalMatch && !allValuesMatch)
                 {
-                    Console.WriteLine("\nYou lost!");
+                    Console.WriteLine("You lost!");
                 }
 
                 //Display round winnings and ask user if they wish to play again
@@ -157,15 +157,13 @@
                 Console.WriteLine($"Do you want to play again? {YES}/{NO}");
                 playAgain = Console.ReadLine();
 
-
+                while (playAgain.ToLower() != YES && playAgain.ToLower() != NO)
                 {
-                    while (playAgain.ToLower() != YES && playAgain.ToLower() != NO)
-                    {
-                        Console.WriteLine($"Invalid input. Please enter '{YES}' or '{NO}'.");
-                        playAgain = Console.ReadLine();
-                    }
-
+                    Console.WriteLine($"Invalid input. Please enter '{YES}' or '{NO}'.");
+                    playAgain = Console.ReadLine();
                 }
+
+
             }
         }
     }
