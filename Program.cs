@@ -5,30 +5,32 @@
         static void Main(string[] args)
         {
             //Initialize constants
-            const int HORPOINT = 20;
-            const int DIAGPOINT = 30;
+            const int HOR_POINT = 20;
+            const int DIAG_POINT = 30;
             const int JACKPOT = 100;
-            const int MINBUYIN = 500;
-            const int MATRIXSIZE = 3;
-            const int MAXNUMBER = 10;
-            const int PLAYCOST = 50;
-            const string YES = "y";
-            const string NO = "n";
+            const int MIN_BUYIN = 500;
+            const int MATRIX_SIZE = 3;
+            const int MAX_NUMBER = 10;
+            const int PLAY_COST = 50;
+            const string POSITVE_INPUT = "y";
+            const string NEGATIVE_INPUT = "n";
+
+            Random rnd = new Random();
 
             //Ask the user for a min buy in of 500 points
-            Console.WriteLine($"Please enter your buy in amount, the minimum is {MINBUYIN} points: ");
+            Console.WriteLine($"Please enter your buy in amount, the minimum is {MIN_BUYIN} points: ");
             string playerInput = Console.ReadLine();
             int totalPoints;
 
-            while (!Int32.TryParse(playerInput, out totalPoints) || totalPoints < MINBUYIN)
+            while (!Int32.TryParse(playerInput, out totalPoints) || totalPoints < MIN_BUYIN)
             {
-                Console.WriteLine($"The entered amount either does not meet the minimum buy in amount or is not a valid input, please enter a valid amount of aleast {MINBUYIN}:");
+                Console.WriteLine($"The entered amount either does not meet the minimum buy in amount or is not a valid input, please enter a valid amount of aleast {MIN_BUYIN}:");
                 playerInput = Console.ReadLine();
             }
 
-            string playAgain = YES;
+            string playAgain = POSITVE_INPUT;
 
-            while (playAgain == YES)
+            while (playAgain == POSITVE_INPUT)
             {
                 Console.Clear();
 
@@ -38,13 +40,13 @@
                     Console.WriteLine("You do not have enough points, would you like to top up? (y/n): ");
                     string topUp = Console.ReadLine();
 
-                    while (topUp.ToLower() != YES && topUp.ToLower() != NO)
+                    while (topUp.ToLower() != POSITVE_INPUT && topUp.ToLower() != NEGATIVE_INPUT)
                     {
-                        Console.Write($"Invalid input, please enter {YES}/{NO}:");
+                        Console.Write($"Invalid input, please enter {POSITVE_INPUT}/{NEGATIVE_INPUT}:");
                         topUp = Console.ReadLine();
                     }
 
-                    if (topUp.ToLower() == YES)
+                    if (topUp.ToLower() == POSITVE_INPUT)
                     {
                         Console.WriteLine("Please enter the amount of points you want to purchase");
                         totalPoints += Convert.ToInt32(Console.ReadLine());
@@ -55,27 +57,26 @@
                     }
                 }
 
-                totalPoints -= PLAYCOST;
+                totalPoints -= PLAY_COST;
 
                 //Generate the random 3x3 matrix for the slot machine
-                Random rnd = new Random();
 
-                int[,] slots = new int[MATRIXSIZE, MATRIXSIZE];
+                int[,] slots = new int[MATRIX_SIZE, MATRIX_SIZE];
 
-                for (int i = 0; i < MATRIXSIZE; i++)
+                for (int i = 0; i < MATRIX_SIZE; i++)
                 {
-                    for (int j = 0; j < MATRIXSIZE; j++)
+                    for (int j = 0; j < MATRIX_SIZE; j++)
                     {
-                        slots[i, j] = rnd.Next(MAXNUMBER);
+                        slots[i, j] = rnd.Next(MAX_NUMBER);
                     }
                 }
 
                 //Print the matrix to display to the user
-                for (int i = 0; i < MATRIXSIZE; i++)
+                for (int i = 0; i < MATRIX_SIZE; i++)
                 {
                     Console.WriteLine("");
 
-                    for (int j = 0; j < MATRIXSIZE; j++)
+                    for (int j = 0; j < MATRIX_SIZE; j++)
                     {
                         Console.Write("   " + slots[i, j]);
                     }
@@ -87,12 +88,24 @@
                 bool diagonalMatch = false;
                 bool allValuesMatch = true;
                 //Check rows for a match in values
-                for (int i = 0; i < MATRIXSIZE; i++)
+                for (int i = 0; i < MATRIX_SIZE; i++)
                 {
-                    if (slots[i, 0] == slots[i, 1] && slots[i, 1] == slots[i, 2])
+                    int rowValue = slots[i, 0];
+
+                    bool allRowSame = true;
+
+                    for (int j = 1; j < MATRIX_SIZE; j++)
                     {
-                        Console.WriteLine($"You won {HORPOINT} points, all values in row {i + 1} match!");
-                        totalPoints = totalPoints + HORPOINT;
+                        if (slots[i, j] != rowValue)
+                        {
+                            allRowSame = false;
+                            break;
+                        }
+                    }
+                    if (allRowSame)
+                    {
+                        Console.WriteLine($"You won {HOR_POINT} points, all values in row {i + 1} match!");
+                        totalPoints = totalPoints + HOR_POINT;
                         rowMatch = true;
                     }
                 }
@@ -100,13 +113,13 @@
                 bool diagonal1 = true;
                 bool diagonal2 = true;
                 //Check the diagonals for a match
-                for (int i = 1; i < MATRIXSIZE; i++)
+                for (int i = 1; i < MATRIX_SIZE; i++)
                 {
                     if (slots[0, 0] != slots[i, i])
                     {
                         diagonal1 = false;
                     }
-                    if (slots[0, 2] != slots[i, 2 - i])
+                    if (slots[0, MATRIX_SIZE - 1] != slots[i, MATRIX_SIZE - 1 - i])
                     {
                         diagonal2 = false;
                     }
@@ -114,22 +127,22 @@
 
                 if (diagonal1)
                 {
-                    Console.WriteLine($"You won {DIAGPOINT} points, all values in first diagonal match!");
-                    totalPoints += DIAGPOINT;
+                    Console.WriteLine($"You won {DIAG_POINT} points, all values in first diagonal match!");
+                    totalPoints += DIAG_POINT;
                     diagonalMatch = true;
                 }
                 if (diagonal2)
                 {
-                    Console.WriteLine($"You won {DIAGPOINT} points, all values in second diagonal match!");
-                    totalPoints += DIAGPOINT;
+                    Console.WriteLine($"You won {DIAG_POINT} points, all values in second diagonal match!");
+                    totalPoints += DIAG_POINT;
                     diagonalMatch = true;
                 }
 
                 int firstValue = slots[0, 0];
                 //Check if all 9 values are a match
-                for (int i = 0; i < MATRIXSIZE; i++)
+                for (int i = 0; i < MATRIX_SIZE; i++)
                 {
-                    for (int j = 0; j < MATRIXSIZE; j++)
+                    for (int j = 0; j < MATRIX_SIZE; j++)
                     {
                         if (slots[i, j] != firstValue)
                         {
@@ -154,12 +167,12 @@
 
                 //Display round winnings and ask user if they wish to play again
                 Console.WriteLine($"Your total points are {totalPoints}");
-                Console.WriteLine($"Do you want to play again? {YES}/{NO}");
+                Console.WriteLine($"Do you want to play again? {POSITVE_INPUT}/{NEGATIVE_INPUT}");
                 playAgain = Console.ReadLine();
 
-                while (playAgain.ToLower() != YES && playAgain.ToLower() != NO)
+                while (playAgain.ToLower() != POSITVE_INPUT && playAgain.ToLower() != NEGATIVE_INPUT)
                 {
-                    Console.WriteLine($"Invalid input. Please enter '{YES}' or '{NO}'.");
+                    Console.WriteLine($"Invalid input. Please enter '{POSITVE_INPUT}' or '{NEGATIVE_INPUT}'.");
                     playAgain = Console.ReadLine();
                 }
 
