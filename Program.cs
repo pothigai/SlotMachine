@@ -37,7 +37,7 @@
                 //Checking if user has enough points to play
                 if (totalPoints <= 0)
                 {
-                    Console.WriteLine("You do not have enough points, would you like to top up? (y/n): ");
+                    Console.WriteLine($"You do not have enough points, would you like to top up? ({POSITVE_INPUT}/{NEGATIVE_INPUT}): ");
                     string topUp = Console.ReadLine();
 
                     while (topUp.ToLower() != POSITVE_INPUT && topUp.ToLower() != NEGATIVE_INPUT)
@@ -159,6 +159,7 @@
                 if (allValuesMatch)
                 {
                     Console.WriteLine($"You won {JACKPOT} points, all values in the slot match!");
+                    totalPoints = totalPoints + JACKPOT;
                 }
                 if (!rowMatch && !diagonalMatch && !allValuesMatch)
                 {
